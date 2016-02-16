@@ -1,0 +1,174 @@
+**bold**, //italic//, __underlined__ and ''monospaced'' texts.
+Of course you can **__//''combine''//__** all these.
+You can mark something as <del>deleted</del> as well.
+You can use <sub>subscript</sub> and <sup>superscript</sup>, too.
+
+Shield {address} so that it does not become a Confluence macro.
+
+Shield star within monospace: ''this should *not* be bold''
+
+  * This is a list
+  * The second item
+    * You may have different levels
+  * Another item
+
+  - The same list but ordered
+  - Another item
+    - Just use indention for deeper levels
+  - That's it
+
+Smileys: :-( :-) :-D :-P ;-)
+
+-> <- <-> => <= <=> >> << -- --- 640x480 (c) (tm) (r)
+"He thought 'It's a man's world'..."  "yuck smart quote"
+
+
+Quoting: I think we should do it
+
+> No we shouldn't
+
+>> Well, I say we should
+
+Tables
+
+^ Heading 1      ^ Heading 2       ^ Heading 3          ^
+| Row 1 Col 1    | Row 1 Col 2     | Row 1 Col 3        |
+| Row 2 Col 1    | some colspan (note the double pipe) ||
+| Row 3 Col 1    | Row 3 Col 2     | Row 3 Col 3        |
+
+
+Assigned MAC address rules: 
+^ Full MAC |  aa:bb:cc:dd:ee:ff  ||||
+^ MAC part |  aa:bb  |  cc:dd  |  ee  |  ff  | 
+^ Desc.    |  MyScript common |  VMhost  | Guest (KVM 01-49 / LXC 50-fe) | Guest interface number  |
+
+
+===== Assigned MAC list =====
+
+^ Hostname     ^ Type  ^ MAC Address ^
+| webtest      |  KVM  | de:ad:be:ea:01:01 |
+| macallan     |  KVM  | de:ad:be:ed:01:01 |
+| balvenie     |  KVM  | de:ad:be:eb:01:01 | <= to change
+| balvenie     |  LXC  | de:ad:be:eb:01:01 | <= to change
+| calcul07     |       | de:ad:aa:bb:01:01 |
+
+<nowiki>
+This is some text which contains addresses like this: http://www.splitbrain.org and **formatting**, but nothing is done with it.
+</nowiki>
+The same is true for %%//__this__ text// with a smiley ;-)%%.
+
+Two chunk of nowiki line %% ;-) %% +and+ %% :-( %%
+
+%% ;-) %% +and+ %% :-( %% at the beginning
+
+%% **nowiki** %% **wiki** %% **nowiki** 
+__test__
+
+hello <nowiki> **b%%old** </nowiki> %%**bb**%% <nowiki> __underscore __ </nowiki>
+
+hello <nowiki> **b%%old** </nowiki> %%**bb** <nowiki> __underscore __ </nowiki>
+
+<code>EBIOS read error: Error 0x0c</code>
+
+Add cgroup mount point
+
+<file - /etc/fstab>
+...
+cgroup		/cgroup	cgroup  defaults	0       0
+</file>
+
+<code>
+# mount /cgroup
+</code>
+
+Even if we aren't working on Snapshot but on the Base volume the snapshot size increase: 
+<code>
+# lvdisplay /dev/vg01/lvSnap
+  LV Name                /dev/vg01/lvSnap
+</code>
+
+  The result of this text is not indented by two spaces.
+
+  Something that looks like a list:
+  - this should not be a list
+
+  code block
+ not a code block
+
+  - list followed by
+  code block
+
+  two lines
+  of code block
+
+http://www.google.com begin with link
+end with link http://www.google.com
+the link http://www.google.com is in the middle
+secure link https://www.google.com
+
+[[http://www.google.com|This Link points to google]]
+[[it:softwares:postgresql|Install PostgreSQL]]
+[[it:softwares:postgresql]]
+
+{{ :lingsrv.png?nolink |}}
+{{ :lvm_snapshot_part1.png | }}
+
+nocode <code> <nowiki> **code** </nowiki>
+</code> this is no code too
+
+===== nowiki + code mix ====
+
+= smallest header =
+
+<code>
+<nowiki>
+</nowiki>
+</code>
+
+<nowiki>
+<code>
+foo
+</code>
+</nowiki>
+
+===== konsole plugin =====
+
+<konsole>
+root@debian:# **aptitude install lxc lvm2**
+</konsole>
+
+<konsole root>
+root@debian:~# fdisk -l
+Disk /dev/sda: 10.7 GB, 10737418240 bytes
+255 heads, 63 sectors/track, 1305 cylinders, total 20971520 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk identifier: 0xa4e7d108<nowiki>
+
+   Device Boot      Start         End      Blocks   Id  System
+/dev/sda1            2048      526335      262144   83  Linux
+/dev/sda2          526336     2623487     1048576   82  Linux swap / Solaris
+/dev/sda3         2623488    11012095     4194304   83  Linux
+/dev/sda4        11012096    20971519     4979712   8e  Linux LVM
+
+</nowiki></konsole>
+
+  Remove -d option to see errors on the console if start fails. The console will be stuck.
+<konsole root>
+root@debian:~# **lxc-start -n new_container -d **
+</konsole>
+
+<konsole root>root@debian:/home/user# fdisk -l
+Disk /dev/sda: 10.7 GB, 10737418240 bytes
+255 heads, 63 sectors/track, 1305 cylinders, total 20971520 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk identifier: 0x00000000
+Disk /dev/sda doesn't contain a valid partition table
+</konsole>
+
+===== fixup borderline case =====
+
+Copy ''\\foo\scripts\*'' to the new machine
