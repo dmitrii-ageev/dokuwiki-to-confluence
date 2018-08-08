@@ -42,3 +42,8 @@ Copy the generated script fix-author.sql to the the confluence server and execut
     # su - postgres
     $ psql -d confluencedb < /tmp/fix-author.sql
 
+Authors
+-------
+
+Ivan Kanis <github@kanis.fr> and some improvements were made by Dmitrii Ageev <d.ageev@gmail.com>
+

@@ -1,4 +1,4 @@
-doku_data_path = "/home/ivan/vo/doku/data"
+doku_data_path = "/path/to/dokuwiki/data"
 space = "IT"
 parent_page = "12649988"  # set page id, can find id by https://confluence.atlassian.com/display/CONFKB/How+to+Get+Confluence+Page+ID+From+The+User+Interface
 
@@ -10,6 +10,6 @@ fixup_line = {
 
 # dictionary mapping DokuWiki user to Confluence user
 doku_confluence_user = {
-    b'joes' : 'joe.smith',
-    b'ivan' : 'ivan.kanis'
+    b'john' : 'john.doe',
+    b'jane' : 'jane.doe'
 }

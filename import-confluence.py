@@ -1,4 +1,5 @@
 import sys
+import ssl
 import os
 from os.path import dirname, isdir, join
 import re
@@ -12,15 +13,21 @@ from doku import doku_to_confluence
 # settings
 from setting import doku_data_path, space, parent_page
 
+# Prepare SSL Context
+context = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
+# Disable SSL certificate checking
+context.verify_mode = ssl.CERT_NONE
+context.check_hostname = False
+
 # Connects to confluence server with username and password
 site_URL = "http://your.confluence.com"
-server = ServerProxy(site_URL + "/rpc/xmlrpc")
+server = ServerProxy(site_URL + "/rpc/xmlrpc", context=context)
 
-username = "ivan.kanis"
+username = "your_username"
 if len(sys.argv) > 1 and sys.argv[1] == '-p':
     pwd = getpass("Enter password: ")
 else:
-	pwd = "mypassword"
+	pwd = "your_password"
 
 token = server.confluence2.login(username, pwd)
 
@@ -87,9 +94,10 @@ def save(project_dir, filename, pagename, is_directory, tree):
     return result
 
 def add_page (project_dir, filename, is_directory = False):
-    pagename = filename.replace('_',' ').strip()
+    pagename = filename.strip()
     if filename[-4:] == '.txt':
-        pagename = pagename[:-4]
+        pagename = filename[:-4]
+        pagename = pagename.replace('_',' ').strip()
     try:
         result = server.confluence2.getPage(token, space, pagename)
     except Fault:
@@ -108,9 +116,3 @@ for project_dir, subdirs, files in os.walk(top_page):
         add_page(project_dir, filename, False)
 
 server.confluence2.logout(token)
-
-# Local Variables:
-# compile-command: "python3 import_confluence.py"
-# End:
-
-# vim:et:sw=4:ts=4:

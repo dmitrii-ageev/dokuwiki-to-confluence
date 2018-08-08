@@ -67,67 +67,67 @@ hello  **b%%old**  **bb**  __underscore __
 
 hello  **b%%old**  %%*bb*  __underscore __ 
 
-{noformat}
+{code}
 EBIOS read error: Error 0x0c
-{noformat}
+{code}
 
 Add cgroup mount point
 
-{noformat}
+{code}
 ...
 cgroup		/cgroup	cgroup  defaults	0       0
-{noformat}
+{code}
 
-{noformat}
+{code}
 # mount /cgroup
-{noformat}
+{code}
 
 Even if we aren't working on Snapshot but on the Base volume the snapshot size increase: 
-{noformat}
+{code}
 # lvdisplay /dev/vg01/lvSnap
   LV Name                /dev/vg01/lvSnap
-{noformat}
+{code}
 
-{noformat}
+{code}
 The result of this text is not indented by two spaces.
-{noformat}
+{code}
 
-{noformat}
+{code}
 Something that looks like a list:
 - this should not be a list
-{noformat}
+{code}
 
-{noformat}
+{code}
 code block
-{noformat}
+{code}
  not a code block
 
 # list followed by
-{noformat}
+{code}
 code block
-{noformat}
+{code}
 
-{noformat}
+{code}
 two lines
 of code block
-{noformat}
+{code}
 
 http://www.google.com begin with link
 end with link http://www.google.com
 the link http://www.google.com is in the middle
 secure link https://www.google.com
 
-[This Link points to google|http://www.google.com]
-[Install PostgreSQL|postgresql]
+[http://www.google.com]
+[postgresql]
 [postgresql]
 
 !lingsrv.png!
 !lvm_snapshot_part1.png!
 
 nocode
-{noformat}
+{code}
  <nowiki> **code** </nowiki>
-{noformat}
+{code}
 
 this is no code too
 
@@ -135,10 +135,10 @@ h2. nowiki + code mix
 
 h6. smallest header
 
-{noformat}
+{code}
 <nowiki>
 </nowiki>
-{noformat}
+{code}
 
 <code>
 foo
@@ -146,11 +146,11 @@ foo
 
 h2. konsole plugin
 
-{noformat}
+{code}
 root@debian:# aptitude install lxc lvm2
-{noformat}
+{code}
 
-{noformat}
+{code}
 root@debian:~# fdisk -l
 Disk /dev/sda: 10.7 GB, 10737418240 bytes
 255 heads, 63 sectors/track, 1305 cylinders, total 20971520 sectors
@@ -165,16 +165,16 @@ Disk identifier: 0xa4e7d108
 /dev/sda3         2623488    11012095     4194304   83  Linux
 /dev/sda4        11012096    20971519     4979712   8e  Linux LVM
 
-{noformat}
+{code}
 
-{noformat}
+{code}
 Remove -d option to see errors on the console if start fails. The console will be stuck.
-{noformat}
-{noformat}
+{code}
+{code}
 root@debian:~# lxc-start -n new_container -d 
-{noformat}
+{code}
 
-{noformat}
+{code}
 root@debian:/home/user# fdisk -l
 Disk /dev/sda: 10.7 GB, 10737418240 bytes
 255 heads, 63 sectors/track, 1305 cylinders, total 20971520 sectors
@@ -183,7 +183,7 @@ Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
 Disk identifier: 0x00000000
 Disk /dev/sda doesn't contain a valid partition table
-{noformat}
+{code}
 
 h2. fixup borderline case
 

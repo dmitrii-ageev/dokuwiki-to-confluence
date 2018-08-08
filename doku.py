@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from re import *
 from setting import fixup_line
 
@@ -30,7 +31,7 @@ class Output:
             s.output_string = s.output_string.rstrip(' ')
             if len(s.output_string) > 0 and s.output_string[-1] != '\n':
                 s.output_string += '\n'
-            s.output_string += '{noformat}'
+            s.output_string += '{code}'
             if line[0] != '\n':
                 s.output_string += '\n'
         s.noformat_depth += 1
@@ -40,7 +41,7 @@ class Output:
         if s.noformat_depth == 0:
             if line[-1] != '\n':
                 s.output_string += '\n'
-            s.output_string += '{noformat}'
+            s.output_string += '{code}'
         s.end_is_noformat = True
         s.noformat_indent = False
     def is_noformat(s):
@@ -84,7 +85,7 @@ class Block:
         else:
             raise StopIteration
 
-def segment_conversion(segment, output):
+def segment_conversion(segment, output, notes):
     """Conversion that occurs on parts of a line."""
 
     ## no formatting
@@ -92,19 +93,50 @@ def segment_conversion(segment, output):
 
     ## links
     # URL to other page
-    segment = sub('\[\[(.*?)\]\]', handle_url , segment)
+    segment = sub('\[\[(.*?)\]\]', lambda m: handle_link(m, url) , segment)
 
-    # image
-    segment = sub('{{(.*)}}', lambda m: handle_link(m, image, output) , segment)
+    # Test if segment has an image attached
+    if search('\.jpeg|\.jpg|\.gif|\.bmp|\.pcx|\.tiff|\.tif|\.png', segment, IGNORECASE) != None:
+      # it's an image
+      segment = sub('{{(.*?)}}', lambda m: handle_link(m, image, output) , segment)
+    else:
+      # it's some other file type
+      segment = sub('{{(.*?)}}', lambda m: handle_link(m, other, output) , segment)
 
     ## basic formatting
     segment = sub(r'\*\*(.*?)\*\*', '*\g<1>*', segment) # bold
-    segment = sub('__(.*?)__', '+\g<1>+', segment) # underline
-    segment = sub('//(.*?)//', '_\g<1>_', segment) # italic
+    segment = sub('__', '+', segment) # underline
+    segment = sub('(^|[^:])//', '\g<1>_', segment) # italic
     segment = process_monospace(segment)
-    segment = sub('<del>(.*?)</del>', '-\g<1>-', segment) # deleted
-    segment = sub('<sub>(.*?)</sub>', '~\g<1>~', segment) # subscript
-    segment = sub('<sup>(.*?)</sup>', '^\g<1>^', segment) # supscript
+    segment = sub('</?del>', '-', segment) # deleted
+    segment = sub('</?sub>', '~', segment) # subscript
+    segment = sub('</?sup>', '^', segment) # supscript
+    # Info, Tip, Note, and Warning Macros
+    ## First process single-line notes
+    segment = sub('<note important>(.*?)<note>', '{info}\g<1>{info}', segment) # important/info note
+    segment = sub('<note warning>(.*?)<note>', '{warning}\g<1>{warning}', segment) # warning note
+    segment = sub('<note tip>(.*?)<note>', '{tip}\g<1>{tip}', segment) # tip note
+    segment = sub('<note>(.*?)<note>', '{note}\g<1>{note}', segment) # a note
+    ## Next process multi-line notes
+    ### opening tags
+    if '<note important>' in segment:
+      segment = sub('<note important>', '{info}', segment) # replace note important with info tag
+      notes.append('{info}')
+    if '<note warning>' in segment:
+      segment = sub('<note warning>', '{warning}', segment) # replace note warning with warning tag
+      notes.append('{warning}')
+    if '<note tip>' in segment:
+      segment = sub('<note tip>', '{tip}', segment) # replace note tip with tip tag
+      notes.append('{tip}')
+    if '<note>' in segment:
+      segment = sub('<note>', '{note}', segment) # place note tag
+      notes.append('{note}')
+    ### closing tag
+    if '</note>' in segment and len(notes) != 0:
+      segment = sub('</note>', notes.pop(0), segment) # place closing tag
+    else:
+      segment = sub('</note>', '{note}', segment) # place closing note tag
+    
 
     ## text conversion
     # text to image
@@ -254,14 +286,13 @@ def conversion_line_by_line (line):
 
     ## sectioning
     for level in range (6, 0, -1):
-        re = '^\s*' + '=' * level + '([^=]*)'
-        if level == 1:
-            re += '='
-        else:
-            re += '==+'
-        re += '\s*$'
-        header = 'h' + str (7 - level) + '. '
-        line = sub(re, lambda m: header + m.group(1).strip() + '\n' , line)
+        if '=' * level in line:
+          if level == 6:
+            re = '^\\s*======+([^=]*)=+\\s*$'
+          else:
+            re = '^\s*' + '=' * level + '([^=]*)' + '=+\s*$'
+          header = 'h' + str (7 - level) + '. '
+          line = sub(re, lambda m: header + m.group(1).strip() + '\n' , line)
 
     return line
 
@@ -271,6 +302,10 @@ def conversion_line_by_line (line):
 def doku_to_confluence(doku_file):
     """Load the redmine wiki page in Doku format and converts it to
 confluence markup. Returns content as a string."""
+
+    # Initialize a stack for notes (info/warning/tip/note)
+    notes_stack = []
+
     o = Output()
     verbatim_start_re = compile('(<nowiki>|<(?:(file|code).*?)>)', flags = DOTALL | MULTILINE)
     verbatim_nowiki_end_re = compile('</nowiki>', flags = DOTALL | MULTILINE)
@@ -332,7 +367,7 @@ confluence markup. Returns content as a string."""
                     line = konsole_line_by_line(line, o)
                     if not o.is_konsole():
                         line = noformat_line_by_line(line, o)
-                        line = segment_conversion(line, o)
+                        line = segment_conversion(line, o, notes_stack)
                     o.output (line)
 
         content = line_fixup(o.result())
@@ -368,10 +403,7 @@ def confluence_list (m, marker, line):
     return line
 
 
-(image, url) = range (0, 2)
-
-def handle_url(m):
-    return handle_link(m, url)
+(image, url, other) = range (0, 3)
 
 def remove_doku_markup (link, what):
     # do not mess http link
@@ -386,21 +418,34 @@ def remove_doku_markup (link, what):
 def handle_link (m, what, output=False):
     if m:
         link = m.group(1)
-        m = match('^(.+?)\|(.*)', link)
+        m = match('^(.*?)\|(.*?)$', link)
         if m:
             group1 = m.group(1).strip()
             group2 = m.group(2).strip()
-            if group2 == '':
+
+            # Replace underscored with space
+            ## Only if there are underscores _and_ it's not an image, document or an archive _and_ it's not a web link
+            if '_' in group1 and (search('\.jpeg|\.jpg|\.gif|\.bmp|\.pcx|\.tiff|\.tif|\.png|\.pdf|\.doc|\.xls|\.zip|\.rar',group1, IGNORECASE) == None) and (search('https?:', group1, IGNORECASE) == None):
+              group1 = group1.replace('_', ' ').strip()
+
+            if group2 == '' or what == image:
                 link = remove_doku_markup(group1, what)
-            else:
-                link = group2 + '|' + remove_doku_markup(group1, what)
+            elif what == other:
+                link = remove_doku_markup(group1, what)
+            elif what == url:
+                link = remove_doku_markup(group1, what)
         else:
             link = remove_doku_markup(link, what)
+
+
         if what == image:
-            output.add_media (link)
+            output.add_media(link)
             return '!' + link + '!'
         elif what == url:
             return '[' + link + ']'
+        elif what == other:
+            output.add_media(link)
+            return '[^' + link + ']'
 
 if __name__ == "__main__":
     from os import system
