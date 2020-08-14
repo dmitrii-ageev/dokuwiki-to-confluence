@@ -123,6 +123,7 @@ secure link https://www.google.com
 
 !lingsrv.png!
 !lvm_snapshot_part1.png!
+!page^network_scheme.jpg!
 
 nocode
 {code}

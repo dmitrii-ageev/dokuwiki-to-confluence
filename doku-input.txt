@@ -112,6 +112,7 @@ secure link https://www.google.com
 
 {{ :lingsrv.png?nolink |}}
 {{ :lvm_snapshot_part1.png | }}
+{{ :page:network_scheme.jpg?800 |}}
 
 nocode <code> <nowiki> **code** </nowiki>
 </code> this is no code too

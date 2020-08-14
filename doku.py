@@ -408,7 +408,10 @@ def confluence_list (m, marker, line):
 def remove_doku_markup (link, what):
     # do not mess http link
     if not match ('^https?:', link):
-        link = sub ('.*:(.*)', '\g<1>', link)
+        if match('^:.*:.*', link):
+            link = sub (':(.*):(.*)', '\g<1>^\g<2>', link)
+        else:
+            link = sub ('.*:(.*)', '\g<1>', link)
     if what == image:
         # all the option after the question mark are not supported in
         # Confluence
