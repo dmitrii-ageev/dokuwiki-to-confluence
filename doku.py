@@ -406,10 +406,14 @@ def confluence_list (m, marker, line):
 (image, url, other) = range (0, 3)
 
 def remove_doku_markup (link, what):
-    # do not mess http link
+    # do not mess with a http link
     if not match ('^https?:', link):
-        if match('^:.*:.*', link):
-            link = sub (':(.*):(.*)', '\g<1>^\g<2>', link)
+        # Replace spaces with underscored
+        link = sub (' ', '_', link)
+        # Check if the link points to a multiple pages deep object
+        if match('.*:.*:.*', link):
+            link = sub (':', '^', link)
+            link = sub ('^\^', '', link, 1)
         else:
             link = sub ('.*:(.*)', '\g<1>', link)
     if what == image:
