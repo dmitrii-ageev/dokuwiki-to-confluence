@@ -410,12 +410,12 @@ def remove_doku_markup (link, what):
     if not match ('^https?:', link):
         # Replace spaces with underscored
         link = sub (' ', '_', link)
-        # Check if the link points to a multiple pages deep object
-        if match('.*:.*:.*', link):
-            link = sub (':', '^', link)
-            link = sub ('^\^', '', link, 1)
+        # Check if the object bound to a certain page
+        if match (':.*:.*', link):
+            link = sub ('.*:(.*):(.*)$', '\g<1>^\g<2>', link)
         else:
-            link = sub ('.*:(.*)', '\g<1>', link)
+            link = sub (':', '^', link)
+            # link = sub ('.*:(.*)', '\g<1>', link)
     if what == image:
         # all the option after the question mark are not supported in
         # Confluence
